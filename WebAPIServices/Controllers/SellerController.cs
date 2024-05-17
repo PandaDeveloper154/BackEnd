@@ -1,11 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using WebAPIServices.Models;
+﻿using Microsoft.AspNetCore.Mvc;
+using WebAPIServices.Models.DTO;
 using WebAPIServices.Services.SuperHeroService;
 
 namespace WebAPIServices.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/Seller")]
     [ApiController]
     public class SellerController : ControllerBase
     {
@@ -16,46 +15,62 @@ namespace WebAPIServices.Controllers
             _sellerService = sellerService;
         }
 
-
         [HttpGet]
-        public async Task<ActionResult<List<Seller>>> GetAllSellers()
+        public async Task<ActionResult<List<SellerDto>>> GetAllSellers()
         {
-            
-            return _sellerService.GetAllSellers();
+            var sellers = await _sellerService.GetAllSellersAsync();
+            return Ok(sellers);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Seller>> GetSingleSeller(int id)
+        public async Task<ActionResult<SellerDto>> GetSingleSeller(int id)
         {
-            var result = _sellerService.GetSingleSeller(id);
-            if (result is null)
+            var seller = await _sellerService.GetSingleSellerAsync(id);
+            if (seller == null)
+            {
                 return NotFound("Seller not found");
-            return Ok(result);
+            }
+            return Ok(seller);
         }
 
         [HttpPost]
-        public async Task<ActionResult<List<Seller>>> AddSeller(Seller seller)
+        public async Task<ActionResult<SellerDto>> AddSeller(SellerDto sellerDto)
         {
-            var result = _sellerService.AddSeller(seller);
-            return Ok(result);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var addedSeller = await _sellerService.AddSellerAsync(sellerDto);
+            return Ok(addedSeller);
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<List<Seller>>> UpdateSeller(int id,Seller request)
+        public async Task<ActionResult<SellerDto>> UpdateSeller(int id, SellerDto sellerDto)
         {
-            var result = _sellerService.UpdateSeller(id, request);
-            if (result is null)
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var updatedSeller = await _sellerService.UpdateSellerAsync(id, sellerDto);
+            if (updatedSeller == null)
+            {
                 return NotFound("Seller not found");
-            return Ok(result);
+            }
+
+            return Ok(updatedSeller);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<List<Seller>>> DeleteSeller(int id)
+        public async Task<ActionResult<List<SellerDto>>> DeleteSeller(int id)
         {
-            var result = _sellerService.DeleteSeller(id);
-            if(result is null)
+            var deletedSellers = await _sellerService.DeleteSellerAsync(id);
+            if (deletedSellers == null)
+            {
                 return NotFound("Seller not found");
-            return Ok(result);
+            }
+            return Ok(deletedSellers);
         }
     }
 }

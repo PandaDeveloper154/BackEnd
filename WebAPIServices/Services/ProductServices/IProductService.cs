@@ -1,11 +1,17 @@
-﻿namespace WebAPIServices.Services.ProductServices
+﻿using Microsoft.Extensions.Caching.Memory;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using WebAPIServices.Models.DTO;
+
+namespace WebAPIServices.Services.ProductServices
 {
     public interface IProductService
     {
-        List<Product> GetAllProducts();
-        Product? GetSingleProduct(int id);
-        List<Product> AddProduct(Product product);
-        List<Product>? UpdateProduct(int id, Product request);
-        List<Product>? DeleteProduct(int id);
+        Task<List<ProductDto>> GetAllProductsAsync();
+        Task<ProductDto> GetSingleProductAsync(int id);
+        Task<List<ProductDto>> AddProductAsync(ProductDto productDto);
+        Task<List<ProductDto>> UpdateProductAsync(int id, ProductDto productDto);
+        Task<List<ProductDto>> DeleteProductAsync(int id);
+        void SetCache(IMemoryCache memoryCache);
     }
 }

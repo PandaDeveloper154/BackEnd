@@ -1,66 +1,68 @@
-﻿
-using WebAPIServices.Models;
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using WebAPIServices.Models.DTO;
+using WebAPIServices.Services.SuperHeroService;
 
-namespace WebAPIServices.Services.SuperHeroService
+namespace WebAPIServices.Services.SellerServices
 {
     public class SellerService : ISellerService
     {
-        private static List<Seller> sellers = new List<Seller>
-            {
-                new Seller{
-                    Id = 1,
-                    Name="Spider Man",
-                    Email="Peter@gmail.com",
-                    Password="Parker"
-                },
-                new Seller{
-                    Id = 2,
-                    Name="Iron Man",
-                    Email="Tony@gmail.com",
-                    Password="Stark"
-                }
-            };
-        public List<Seller> AddSeller(Seller seller)
+        private static List<SellerDto> sellers = new List<SellerDto>
+    {
+        new SellerDto { Id = 1, Name = "Spider Man", Email = "Peter@gmail.com", Password = "Parker" },
+        new SellerDto { Id = 2, Name = "Iron Man", Email = "Tony@gmail.com", Password = "Stark" }
+    };
+
+        public async Task<SellerDto> AddSellerAsync(SellerDto seller)
         {
             sellers.Add(seller);
-            return sellers;
+            return await Task.FromResult(seller);
         }
 
-
-        public List<Seller>? DeleteSeller(int id)
+        public async Task<List<SellerDto>> DeleteSellerAsync(int id)
         {
-            var seller = sellers.Find(x => x.Id == id);
-            if (seller is null)
-                return null;
-            sellers.Remove(seller);
-            return sellers;
+            var seller = sellers.Find(s => s.Id == id);
+            if (seller != null)
+            {
+                sellers.Remove(seller);
+            }
+            return await Task.FromResult(sellers);
         }
 
-
-        public List<Seller> GetAllSellers()
+        public async Task<List<SellerDto>> GetAllSellersAsync()
         {
-            return sellers;
+            return await Task.FromResult(sellers);
         }
 
-
-        public Seller? GetSingleSeller(int id)
+        public async Task<SellerDto> GetSingleSellerAsync(int id)
         {
-            var seller = sellers.Find(x => x.Id == id);
-            if (seller is null)
-                return null;
-            return seller;
+            return await Task.FromResult(sellers.FirstOrDefault(s => s.Id == id));
         }
 
-
-        public List<Seller>? UpdateSeller(int id, Seller request)
+        public async Task<SellerDto> UpdateSellerAsync(int id, SellerDto seller)
         {
-            var seller = sellers.Find(x => x.Id == id);
-            if (seller is null)
-                return null;
-            seller.Name = request.Name;
-            seller.Email = request.Email;
-            seller.Password = request.Password;
-            return sellers;
+            var existingSeller = sellers.FirstOrDefault(s => s.Id == id);
+            if (existingSeller != null)
+            {
+                existingSeller.Name = seller.Name;
+                existingSeller.Email = seller.Email;
+                existingSeller.Password = seller.Password;
+            }
+            return await Task.FromResult(existingSeller);
+        }
+
+        public async Task<string> SerializeSellerAsync(SellerDto seller)
+        {
+            string json = JsonConvert.SerializeObject(seller);
+            return await Task.FromResult(json);
+        }
+
+        public async Task<SellerDto> DeserializeSellerAsync(string json)
+        {
+            SellerDto seller = JsonConvert.DeserializeObject<SellerDto>(json);
+            return await Task.FromResult(seller);
         }
     }
 }

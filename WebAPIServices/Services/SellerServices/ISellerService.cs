@@ -1,12 +1,15 @@
-﻿namespace WebAPIServices.Services.SuperHeroService
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using WebAPIServices.Models.DTO;
+
+namespace WebAPIServices.Services.SuperHeroService
 {
     public interface ISellerService
     {
-        
-        List<Seller> GetAllSellers();
-        Seller? GetSingleSeller(int id);
-        List<Seller> AddSeller(Seller seller);
-        List<Seller>? UpdateSeller(int id, Seller request);
-        List<Seller>? DeleteSeller(int id);
+        Task<List<SellerDto>> GetAllSellersAsync();
+        Task<SellerDto> GetSingleSellerAsync(int id);
+        Task<SellerDto> AddSellerAsync(SellerDto seller);
+        Task<SellerDto> UpdateSellerAsync(int id, SellerDto seller);
+        Task<List<SellerDto>> DeleteSellerAsync(int id);
     }
 }
